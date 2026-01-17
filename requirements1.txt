@@ -14,7 +14,7 @@ inflection
 itypes
 Jinja2
 MarkupSafe
-PyMySQL
+mysqlclient
 openapi-codec
 packaging
 Pillow

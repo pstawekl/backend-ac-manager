@@ -2,3 +2,9 @@
 
 *.pyc
 venv/
+
+# macOS
+.DS_Store
+
+.vscode
+.expo
