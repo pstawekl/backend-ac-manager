@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oferta - {{ company_name }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .email-container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #0A8686;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            color: #0A8686;
+            margin: 0;
+            font-size: 28px;
+        }
+        .company-info {
+            text-align: center;
+            color: #666;
+            margin-top: 10px;
+        }
+        .content {
+            margin-bottom: 30px;
+        }
+        .greeting {
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+        .devices-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        .table-header {
+            background-color: #0A8686;
+            color: white;
+        }
+        .table-header th {
+            padding: 12px;
+            text-align: left;
+            font-weight: bold;
+        }
+        .manufacturer-header {
+            background-color: #f5f5f5;
+            font-weight: bold;
+            padding: 10px;
+            border-left: 1px solid #ddd;
+            border-right: 1px solid #ddd;
+        }
+        .device-row {
+            background-color: white;
+            border-left: 1px solid #ddd;
+            border-right: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+        }
+        .device-row td {
+            padding: 10px;
+        }
+        .price-column {
+            text-align: right;
+            font-weight: bold;
+            color: #0A8686;
+        }
+        .summary {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 6px;
+        }
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        .summary-label {
+            font-weight: bold;
+        }
+        .action-button {
+            display: inline-block;
+            background-color: #0A8686;
+            color: white;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: bold;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .action-button:hover {
+            background-color: #087070;
+        }
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+        }
+        .contact-info {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 6px;
+        }
+        .note {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #fff9e6;
+            border-left: 4px solid #ffc107;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Oferta klimatyzacji</h1>
+            <div class="company-info">
+                <strong>{{ company_name }}</strong>
+                {% if company_email %}<br>{{ company_email }}{% endif %}
+                {% if company_phone %}<br>Tel: {{ company_phone }}{% endif %}
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <div class="greeting">
+                Dzień dobry,
+                <br><br>
+                Przesyłamy ofertę na montaż klimatyzacji. Poniżej znajdą Państwo szczegółowe informacje o proponowanych urządzeniach oraz cenę montażu.
+            </div>
+
+            <!-- Devices Table -->
+            <table class="devices-table">
+                <thead class="table-header">
+                    <tr>
+                        <th>Urządzenie - moc chłodnicza</th>
+                        <th style="text-align: right;">Cena z montażem</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for manufacturer, devices in grouped_devices.items %}
+                        <tr>
+                            <td colspan="2" class="manufacturer-header">{{ manufacturer }}</td>
+                        </tr>
+                        {% for device in devices %}
+                        <tr class="device-row">
+                            <td>
+                                {{ device.nazwa_modelu }} {{ device.nazwa_modelu_producenta }} – {{ device.moc_chlodnicza }} kW
+                                {% if device.typ or device.rodzaj %}
+                                <br><small style="color: #666;">({{ device.typ|default:device.rodzaj }})</small>
+                                {% endif %}
+                            </td>
+                            <td class="price-column">
+                                {{ device.final_price|floatformat:2 }} zł
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <!-- Summary -->
+            {% if surcharges %}
+            <div class="summary">
+                <h3 style="margin-top: 0; color: #0A8686;">Szczegóły montażu:</h3>
+                {% for surcharge in surcharges %}
+                <div class="summary-item">
+                    <span class="summary-label">{{ surcharge.name }}:</span>
+                    <span>{{ surcharge.value|floatformat:2 }} zł</span>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Note about selection -->
+            <div class="note">
+                <strong>Uwaga:</strong> Po zalogowaniu się do aplikacji będą mogą Państwo wybrać interesujące Państwa urządzenie i zaproponować dogodny termin montażu.
+            </div>
+
+            <!-- Action Button -->
+            <div style="text-align: center;">
+                <a href="{{ app_link }}" class="action-button">Otwórz ofertę w aplikacji</a>
+            </div>
+
+            <!-- Contact Info -->
+            <div class="contact-info">
+                <strong>W razie pytań prosimy o kontakt:</strong><br>
+                {% if contact_person %}{{ contact_person }}<br>{% endif %}
+                {% if contact_email %}Email: {{ contact_email }}<br>{% endif %}
+                {% if contact_phone %}Tel: {{ contact_phone }}{% endif %}
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>Dziękujemy za zainteresowanie naszą ofertą!</p>
+            <p style="font-size: 12px; color: #999;">
+                Ta wiadomość została wygenerowana automatycznie. Prosimy na nią nie odpowiadać.
+            </p>
+        </div>
+    </div>
+</body>
+</html>
+
